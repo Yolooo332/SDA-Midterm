@@ -37,8 +37,10 @@ typedef struct List
 ListNode *createNode(Item elem)
 {
     // TODO: Cerinta 1a
-
-    return NULL;
+    ListNode *node = malloc(sizeof(struct ListNode));
+    node->elem = elem;
+    node->next = node->prev = NULL;
+    return node;
 }
 
 /**
@@ -49,8 +51,9 @@ ListNode *createNode(Item elem)
 List *createList(void)
 {
     // TODO: Cerinta 1a
-
-    return NULL;
+    List *list = malloc(sizeof(struct List));
+    list->first = list->last = NULL;
+    return list;
 }
 // -----------------------------------------------------------------------------
 
@@ -62,6 +65,10 @@ List *createList(void)
 int isEmpty(List *list)
 {
     // TODO: Cerinta 1b
+    if (list == NULL || list->first == NULL)
+    {
+        return 1;
+    }
     return 0;
 }
 // -----------------------------------------------------------------------------
@@ -74,7 +81,19 @@ int isEmpty(List *list)
 int contains(List *list, Item elem)
 {
     // TDOO: Cerinta 1c
-
+    if (list == NULL)
+    {
+        return 0;
+    }
+    ListNode *iter = list->first;
+    while (iter != NULL)
+    {
+        if (iter->elem == elem)
+        {
+            return 1;
+        }
+        iter = iter->next;
+    }
     return 0;
 }
 // -----------------------------------------------------------------------------
@@ -87,12 +106,55 @@ int contains(List *list, Item elem)
  */
 void insertAt(List *list, Item elem, int pos)
 {
-
-    // Guard against young player errors
     if (list == NULL)
         return;
 
-    // TODO: Cerinta 1d
+    ListNode *node = createNode(elem);
+
+    if (list->first == NULL)
+    {
+        list->first = list->last = node;
+        return;
+    }
+
+    if (pos == 0)
+    {
+        node->next = list->first;
+        list->first->prev = node;
+        list->first = node;
+        return;
+    }
+
+    ListNode *current = list->first;
+    int currentPos = 0;
+
+    while (current->next != NULL && currentPos < pos - 1)
+    {
+        current = current->next;
+        currentPos++;
+    }
+
+    if (current->next == NULL && currentPos == pos - 1)
+    {
+        current->next = node;
+        node->prev = current;
+        list->last = node;
+        return;
+    }
+
+    if (current->next != NULL)
+    {
+        node->next = current->next;
+        node->prev = current;
+        current->next->prev = node;
+        current->next = node;
+    }
+    else
+    {
+        current->next = node;
+        node->prev = current;
+        list->last = node;
+    }
 }
 // -----------------------------------------------------------------------------
 
